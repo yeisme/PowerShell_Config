@@ -1,7 +1,9 @@
 param (
-    [hashtable]$ConfigFiles
+    [hashtable]$ConfigFiles,
+    [bool]$Debug = $false
 )
 
+# 注册环境变量
 function Register-EnvironmentVariables {
     param (
         [string]$configName,
@@ -11,23 +13,25 @@ function Register-EnvironmentVariables {
     [System.Environment]::SetEnvironmentVariable($configName, $configPath, [System.EnvironmentVariableTarget]::Process)
 }
 
+
 # 循环遍历配置文件
 foreach ($configName in $ConfigFiles.Keys) {
     $configPath = $ConfigFiles[$configName]
     if (Test-Path -Path $configPath) {
 
-        # 记录开始时间
-        $startTime = Get-Date
+        if ($Debug) {
+            $StartTime = Get-Date
+        }
 
         # 调用函数注册环境变量
         Register-EnvironmentVariables -configName $configName -configPath $configPath
         . $configPath
 
-        # 记录结束时间
-        $endTime = Get-Date
-        $duration = ($endTime - $startTime).TotalMilliseconds
-
-        # Write-Host "配置文件 '$configName' 加载时间: $duration" -ForegroundColor Green
+        if ($Debug) {
+            $EndTime = Get-Date
+            $Duration = ($EndTime - $StartTime).TotalMilliseconds
+            Write-Host "配置文件 $configName 加载时间: $Duration 毫秒" -ForegroundColor Red
+        }
 
     }
     else {
