@@ -5,18 +5,16 @@ Import-Module -Name PSReadLine -ErrorAction SilentlyContinue
 
 
 ## 自动加载 Config/TabHelpFile 的配置文件
-function Import-TabConfigFiles {
-    $TabHelpConfig = Join-Path $PROFILE "..\Config\TabHelpFile"
+$TabHelpConfig = Join-Path $PROFILE "..\Config\TabHelpFile"
 
-    $TabHelpConfigFile = Get-ChildItem -Path $TabHelpConfig -Filter *.ps1
 
-    foreach ($file in $TabHelpConfigFile) {
-        Invoke-Expression $file.FullName
-    }
+$TabHelpConfigFile = Get-ChildItem -Path $TabHelpConfig -Filter *.ps1
+foreach ($file in $TabHelpConfigFile) {
+
+    . $file.FullName
+    # Write-Host $file.FullName
 }
 
-## 命令补全
-Import-TabConfigFiles
 
 # 修改配置策略
 Set-PSReadLineOption -PredictionSource History # 设置预测源为历史记录
