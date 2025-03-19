@@ -1,6 +1,7 @@
 # ModulesImport.ps1
 # 引入模块，从 PSGallery 安装
-
+# Install-Module -Name z -Scope CurrentUser -Force
+# Install-Module -Name PSFzf -Scope CurrentUser -Force
 
 # 定义要导入的模块列表
 $modules = @(

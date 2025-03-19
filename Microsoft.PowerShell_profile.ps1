@@ -5,6 +5,7 @@ $ConfigFiles = @{
     "TabHelp"       = "$PROFILE/../Config/TabHelp.ps1"
     "ModulesImport" = "$PROFILE/../Config/ModulesImport.ps1"
     "MyFuncAlias"   = "$PROFILE/../Config/MyFuncAlias.ps1"
+    "DockerFunction" = "$PROFILE/../Config/DockerFunction.ps1"
 }
 
 # 导入配置文件接口，Import-ConfigFiles
