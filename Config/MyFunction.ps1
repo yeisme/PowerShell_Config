@@ -96,3 +96,7 @@ function ghce {
     }
 }
 
+function msvc {
+    Import-Module "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\Tools\Microsoft.VisualStudio.DevShell.dll"
+    Enter-VsDevShell ea89f6fa -SkipAutomaticLocation -DevCmdArguments "-arch=x64 -host_arch=x64"
+}

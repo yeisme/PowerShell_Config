@@ -23,7 +23,6 @@ Set-Alias e Invoke-Eza
 Set-Alias pd -Description "PowerShell Without Profile" Invoke-PWSH
 
 ### neovim
-
 Set-Alias vi nvim
 Set-Alias vim nvim
 Set-Alias nd neovide
