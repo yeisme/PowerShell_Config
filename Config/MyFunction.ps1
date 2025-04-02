@@ -100,3 +100,15 @@ function msvc {
     Import-Module "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\Tools\Microsoft.VisualStudio.DevShell.dll"
     Enter-VsDevShell ea89f6fa -SkipAutomaticLocation -DevCmdArguments "-arch=x64 -host_arch=x64"
 }
+
+function emv {
+    # Check if Emscripten is installed
+    if (-not (Get-Command emcc -ErrorAction SilentlyContinue)) {
+        Write-Host "Emscripten is not installed. Please install it first."
+        return
+    }
+
+    # Activate Emscripten environment
+    & emsdk activate latest
+    & emcc --version
+}
