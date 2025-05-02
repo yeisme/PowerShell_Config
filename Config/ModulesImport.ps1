@@ -1,20 +1,12 @@
 # ModulesImport.ps1
 # 引入模块，从 PSGallery 安装
-# Install-Module -Name z -Scope CurrentUser -Force
 # Install-Module -Name PSFzf -Scope CurrentUser -Force
 
 # 定义要导入的模块列表
 $modules = @(
     "posh-git",
-    "oh-my-posh",
-
-    "PSFzf",
-    "Microsoft.WinGet.Client"
-
-    #f45873b3-b655-43a6-b217-97c00aa0db58 PowerToys CommandNotFound module
-    # "Microsoft.WinGet.CommandNotFound"
-    #f45873b3-b655-43a6-b217-97c00aa0db58
-
+    # "oh-my-posh",
+    "PSFzf"
 )
 
 # 循环遍历并导入模块

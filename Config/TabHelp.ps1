@@ -1,9 +1,5 @@
 # TabHelp.ps1
 
-# 这个模块负责补全和历史记录，所以放在 TabHelp.ps1 中
-Import-Module -Name PSReadLine -ErrorAction SilentlyContinue
-
-
 ## 自动加载 Config/TabHelpFile 的配置文件
 $TabHelpConfig = Join-Path $PROFILE "..\Config\TabHelpFile"
 
@@ -12,7 +8,6 @@ $TabHelpConfigFile = Get-ChildItem -Path $TabHelpConfig -Filter *.ps1
 foreach ($file in $TabHelpConfigFile) {
 
     . $file.FullName
-    # Write-Host $file.FullName
 }
 
 

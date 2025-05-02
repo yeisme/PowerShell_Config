@@ -27,3 +27,5 @@ Set-Alias vi nvim
 Set-Alias vim nvim
 Set-Alias nd neovide
 Set-Alias nt nvim-qt
+Set-Alias which Get-Command
+
