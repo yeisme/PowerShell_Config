@@ -1,12 +1,18 @@
 # MyFuncAlias.ps1
 
 function Invoke-GitCloneDepth1 {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$repositoryUrl,
+        # submodule
+        [switch]$submodule = $false
+    )
 
-    git clone --depth=1 @args
-}
-
-function Invoke-Eza {
-    eza @args
+    if ($submodule) {
+        git clone --depth=1 --recurse-submodules $repositoryUrl
+        return
+    }
+    git clone --depth=1 $repositoryUrl 
 }
 
 function Invoke-PWSH {
@@ -15,9 +21,6 @@ function Invoke-PWSH {
 
 ### git
 Set-Alias gc1 Invoke-GitCloneDepth1
-
-# eza
-Set-Alias e Invoke-Eza
 
 # pwsh
 Set-Alias pd -Description "PowerShell Without Profile" Invoke-PWSH

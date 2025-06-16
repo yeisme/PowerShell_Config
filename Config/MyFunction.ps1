@@ -112,3 +112,13 @@ function emv {
     & emsdk activate latest
     & emcc --version
 }
+
+function cda {
+    #region conda initialize
+    # !! Contents within this block are managed by 'conda init' !!
+    If (Test-Path "C:\Users\yeisme\conda\Scripts\conda.exe") {
+    (& "C:\Users\yeisme\conda\Scripts\conda.exe" "shell.powershell" "hook") | Out-String | ? { $_ } | Invoke-Expression
+    }
+    #endregion
+
+}
