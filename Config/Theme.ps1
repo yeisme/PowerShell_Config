@@ -6,11 +6,21 @@ function Set-MyPoshTheme {
         [string]$Theme = "powerline"
     )
 
-    oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH/$Theme.omp.json" | Invoke-Expression
+    # For new oh-my-posh executable, use the config path or built-in themes
+    # If $env:POSH_THEMES_PATH exists, use it; otherwise, assume themes are in default location
+    if ($env:POSH_THEMES_PATH) {
+        $configPath = "$env:POSH_THEMES_PATH/$Theme.omp.json"
+    }
+    else {
+        # Use built-in themes or assume a default path
+        $configPath = "$HOME/.config/oh-my-posh/themes/$Theme.omp.json"
+    }
+
+    oh-my-posh init pwsh --config $configPath | Invoke-Expression
 
     if ($Debug) {
         Write-Host "Theme $Theme loaded" -ForegroundColor Green
-        Write-Host "oh-my-posh init pwsh --config  $env:POSH_THEMES_PATH/$Theme.omp.json" -ForegroundColor Green
+        Write-Host "oh-my-posh init pwsh --config $configPath" -ForegroundColor Green
     }
 }
 
@@ -30,4 +40,4 @@ function Set-MyPoshTheme {
 # Get-PoshThemes # 查看所有主题
 
 #! starship 主题设置
-Invoke-Expression (&starship init powershell)
+# Invoke-Expression (&starship init powershell)

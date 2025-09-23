@@ -98,7 +98,7 @@ function ghce {
 
 function msvc {
     Import-Module "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\Tools\Microsoft.VisualStudio.DevShell.dll"
-    Enter-VsDevShell ea89f6fa -SkipAutomaticLocation -DevCmdArguments "-arch=x64 -host_arch=x64"
+    Enter-VsDevShell e427f47a -SkipAutomaticLocation -DevCmdArguments "-arch=x64 -host_arch=x64"
 }
 
 function emv {
@@ -114,11 +114,39 @@ function emv {
 }
 
 function cda {
-    #region conda initialize
-    # !! Contents within this block are managed by 'conda init' !!
-    If (Test-Path "C:\Users\yeisme\conda\Scripts\conda.exe") {
-    (& "C:\Users\yeisme\conda\Scripts\conda.exe" "shell.powershell" "hook") | Out-String | ? { $_ } | Invoke-Expression
-    }
-    #endregion
+  
+#region conda initialize
+# !! Contents within this block are managed by 'conda init' !!
+If (Test-Path "C:\Users\ye\scoop\apps\mambaforge\current\Scripts\conda.exe") {
+    (& "C:\Users\ye\scoop\apps\mambaforge\current\Scripts\conda.exe" "shell.powershell" "hook") | Out-String | ?{$_} | Invoke-Expression
+}
+#endregion
 
+}
+
+$QT_DIR = "C:\Qt\6.8.3"
+
+function QT-VS {
+    $env:PATH = "$QT_DIR\msvc2022_64\bin;$env:PATH"
+}
+
+# 移除 QT-VS 设置的环境变量
+function QT-RVS {
+    $env:PATH = $env:PATH -replace [regex]::Escape("$QT_DIR\msvc2022_64\bin;"), ""
+}
+
+function QT-MinGW {
+    $env:PATH = "$QT_DIR\mingw_64\bin;C:\Qt\Tools\mingw1310_64\bin\;$env:PATH"
+}
+
+function QT-RMinGW {
+    $env:PATH = $env:PATH -replace [regex]::Escape("$QT_DIR\mingw_64\bin;C:\Qt\Tools\mingw1310_64\bin;"), ""
+}
+
+function QT-LLVM {
+    $env:PATH = "$QT_DIR\mingw1706_64\bin;C:\Qt\Tools\llvm-mingw1706_64\bin;$env:PATH"
+}
+
+function QT-RLLVM {
+    $env:PATH = $env:PATH -replace [regex]::Escape("$QT_DIR\mingw1706_64\bin;C:\Qt\Tools\llvm-mingw1706_64\bin;"), ""
 }

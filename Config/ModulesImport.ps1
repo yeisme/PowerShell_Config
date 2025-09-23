@@ -5,7 +5,6 @@
 # 定义要导入的模块列表
 $modules = @(
     "posh-git",
-    # "oh-my-posh",
     "PSFzf"
 )
 
@@ -31,5 +30,4 @@ Set-PsFzfOption -PSReadlineChordProvider 'Ctrl+f' -PSReadlineChordReverseHistory
 Set-PsFzfOption -EnableFd
 Set-PsFzfOption -FdCommand 'fd --type f --hidden --follow --exclude .git'
 
-# fnm
-fnm env --shell powershell | Out-String | Invoke-Expression
+fnm env --use-on-cd | Out-String | Invoke-Expression

@@ -32,3 +32,6 @@ Set-Alias nd neovide
 Set-Alias nt nvim-qt
 Set-Alias which Get-Command
 
+Set-Alias qtc C:/Qt/qtcreator-17.0.1/bin/qtcreator.exe
+
+Set-Alias vs22 "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\devenv.exe"
