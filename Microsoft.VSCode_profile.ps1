@@ -1,6 +1,7 @@
 
 # 定义一个哈希表来存储配置文件路径
 $ConfigFiles = @{
+    "Env"            = "$PROFILE/../Config/Env.ps1"
     # "Theme"          = "$PROFILE/../Config/Theme.ps1"
     "Function"       = "$PROFILE/../Config/MyFunction.ps1"
     "TabHelp"        = "$PROFILE/../Config/TabHelp.ps1"
