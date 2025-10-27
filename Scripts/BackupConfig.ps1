@@ -26,6 +26,7 @@ $BackupDir = Join-Path -Path $ProjectRoot -ChildPath "Backup"
 $FilesToBackup = @{
     "~\.wezterm.lua"          = "wezterm.lua"
     "~\.gitconfig"            = "gitconfig"
+    "C:\Users\ye\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json" = "wt.config.json"
 }
 
 # 也可以使用数组来定义备份文件（备注：数组版本）
@@ -52,42 +53,42 @@ function Backup-Item {
     param(
         [Parameter(Mandatory = $true)]
         [string]$SourcePath,
-        
+
         [Parameter(Mandatory = $true)]
         [string]$DestinationName,
-        
+
         [Parameter(Mandatory = $true)]
         [string]$BackupDirectory
     )
-    
+
     # 展开 ~ 符号为用户主目录
     $ExpandedSource = $SourcePath -replace '^~', $HOME
-    
+
     # 检查源是否存在
     if (-not (Test-Path -Path $ExpandedSource)) {
         Write-Warning "源文件不存在: $SourcePath ($ExpandedSource)"
         return $false
     }
-    
+
     # 构建目标路径
     $DestinationPath = Join-Path -Path $BackupDirectory -ChildPath $DestinationName
-    
+
     try {
         # 如果目标已存在，创建备份
         if (Test-Path -Path $DestinationPath) {
             $timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
             $backupName = "$DestinationName.$timestamp"
             $backupPath = Join-Path -Path $BackupDirectory -ChildPath $backupName
-            
+
             Write-Host "目标已存在，移动旧备份: $DestinationName -> $backupName" -ForegroundColor Yellow
-            
+
             if ((Get-Item -Path $ExpandedSource) -is [System.IO.DirectoryInfo]) {
                 Move-Item -Path $DestinationPath -Destination $backupPath -Force -Verbose
             } else {
                 Move-Item -Path $DestinationPath -Destination $backupPath -Force -Verbose
             }
         }
-        
+
         # 复制文件或文件夹
         $item = Get-Item -Path $ExpandedSource
         if ($item -is [System.IO.DirectoryInfo]) {
@@ -99,7 +100,7 @@ function Backup-Item {
             Copy-Item -Path $ExpandedSource -Destination $DestinationPath -Force -Verbose
             Write-Host "✓ 成功备份文件: $SourcePath -> $DestinationName" -ForegroundColor Green
         }
-        
+
         return $true
     }
     catch {
@@ -116,24 +117,24 @@ function Invoke-ConfigBackup {
     param(
         [Parameter(Mandatory = $true)]
         [hashtable]$BackupMap,
-        
+
         [Parameter(Mandatory = $true)]
         [string]$TargetDirectory,
-        
+
         [switch]$UseArray
     )
-    
+
     # 创建 Backup 目录（如果不存在）
     if (-not (Test-Path -Path $TargetDirectory)) {
         New-Item -ItemType Directory -Path $TargetDirectory -Force | Out-Null
         Write-Host "✓ 创建 Backup 目录: $TargetDirectory" -ForegroundColor Green
     }
-    
+
     $successCount = 0
     $failureCount = 0
-    
+
     Write-Host "`n开始备份配置文件...`n" -ForegroundColor Cyan
-    
+
     if ($UseArray) {
         # 使用数组备份
         foreach ($item in $BackupMap) {
@@ -154,7 +155,7 @@ function Invoke-ConfigBackup {
             }
         }
     }
-    
+
     Write-Host "`n备份完成!" -ForegroundColor Cyan
     Write-Host "成功: $successCount | 失败: $failureCount`n" -ForegroundColor Yellow
 }

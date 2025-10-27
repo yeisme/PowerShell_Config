@@ -1,0 +1,108 @@
+{
+  "$help": "https://aka.ms/terminal-documentation",
+  "$schema": "https://aka.ms/terminal-profiles-schema",
+  "actions": [],
+  "alwaysShowNotificationIcon": true,
+  "copyFormatting": "none",
+  "copyOnSelect": false,
+  "defaultProfile": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
+  "keybindings": [
+    {
+      "id": "Terminal.CopyToClipboard",
+      "keys": "ctrl+c"
+    },
+    {
+      "id": "Terminal.FindText",
+      "keys": "ctrl+shift+f"
+    },
+    {
+      "id": "Terminal.PasteFromClipboard",
+      "keys": "ctrl+v"
+    },
+    {
+      "id": "Terminal.DuplicatePaneAuto",
+      "keys": "alt+shift+d"
+    }
+  ],
+  "newTabMenu": [
+    {
+      "type": "remainingProfiles"
+    }
+  ],
+  "profiles": {
+    "defaults": {
+      "colorScheme": "One Half Dark",
+      "cursorShape": "filledBox",
+      "font": {
+        "face": "JetBrainsMonoNL Nerd Font"
+      },
+      "opacity": 70,
+      "suppressApplicationTitle": true
+    },
+    "list": [
+      {
+        "commandline": "%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+        "guid": "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}",
+        "hidden": false,
+        "name": "Windows PowerShell"
+      },
+      {
+        "commandline": "%SystemRoot%\\System32\\cmd.exe",
+        "guid": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}",
+        "hidden": false,
+        "name": "\u547d\u4ee4\u63d0\u793a\u7b26"
+      },
+      {
+        "guid": "{b453ae62-4e3d-5e58-b989-0a998ec441b8}",
+        "hidden": false,
+        "name": "Azure Cloud Shell",
+        "source": "Windows.Terminal.Azure"
+      },
+      {
+        "commandline": "\"C:\\Users\\ye\\scoop\\shims\\pwsh.exe\" -Login",
+        "guid": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
+        "hidden": false,
+        "name": "PowerShell",
+        "source": "Windows.Terminal.PowershellCore"
+      },
+      {
+        "guid": "{1a26691d-672a-5123-b59b-1b683efab168}",
+        "hidden": false,
+        "name": "Developer Command Prompt for VS 2022",
+        "source": "Windows.Terminal.VisualStudio"
+      },
+      {
+        "guid": "{c87f950b-908f-5073-b82d-78989365c582}",
+        "hidden": false,
+        "name": "Developer PowerShell for VS 2022",
+        "source": "Windows.Terminal.VisualStudio"
+      },
+      {
+        "commandline": "C:\\Users\\ye\\scoop\\shims\\cygwin.exe",
+        "guid": "{5938b61b-3426-4e29-b832-fa4d8c301232}",
+        "hidden": false,
+        "icon": "C:\\Users\\ye\\scoop\\apps\\cygwin\\current\\root\\Cygwin.ico",
+        "name": "cygwin",
+        "startingDirectory": "%USERPROFILE%"
+      },
+      {
+        "guid": "{545144cc-742e-5b8d-ab26-a236d07301d8}",
+        "hidden": false,
+        "name": "Ubuntu-24.04",
+        "source": "Microsoft.WSL"
+      },
+      {
+        "guid": "{ba52e6ea-45b8-5ce8-a939-83a67b7c14bf}",
+        "hidden": false,
+        "name": "podman-machine-default",
+        "source": "Microsoft.WSL"
+      }
+    ]
+  },
+  "schemes": [],
+  "showTabsFullscreen": true,
+  "tabWidthMode": "equal",
+  "theme": "dark",
+  "themes": [],
+  "useAcrylicInTabRow": false
+}
