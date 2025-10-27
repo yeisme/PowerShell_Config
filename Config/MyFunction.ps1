@@ -175,3 +175,47 @@ function cudnn-130 {
 function rcuda-130 {
     $env:PATH = $env:PATH -replace [regex]::Escape("C:\Program Files\NVIDIA\CUDNN\v10.0\bin\13.0;"), ""
 }
+
+<#
+.SYNOPSIS
+    执行配置文件备份
+
+.DESCRIPTION
+    运行 BackupConfig.ps1 脚本，将定义的配置文件备份到 Backup 目录
+
+.EXAMPLE
+    PS> backup-config
+    开始备份配置文件...
+    ✓ 成功备份文件: ~/.wezterm.lua -> wezterm.lua
+    ...
+    备份完成!
+    成功: 6 | 失败: 0
+
+.NOTES
+    此函数依赖 Scripts/BackupConfig.ps1 脚本的存在和可执行权限
+#>
+function backup-config {
+    [CmdletBinding()]
+    param()
+    
+    # PowerShell 配置目录位于 Documents\PowerShell
+    $ProjectRoot = "$HOME\Documents\PowerShell"
+    $BackupScript = Join-Path -Path $ProjectRoot -ChildPath "Scripts\BackupConfig.ps1"
+    
+    # 验证脚本是否存在
+    if (-not (Test-Path -Path $BackupScript)) {
+        Write-Error "备份脚本不存在: $BackupScript"
+        return
+    }
+    
+    try {
+        Write-Host "执行配置备份..." -ForegroundColor Cyan
+        & $BackupScript -Force
+    }
+    catch {
+        Write-Error "执行备份脚本失败: $_"
+    }
+}
+
+# 别名：bc 用于快速调用备份
+Set-Alias -Name bc -Value backup-config -Scope Global -Option AllScope
