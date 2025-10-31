@@ -219,3 +219,139 @@ function backup-config {
 
 # 别名：bc 用于快速调用备份
 Set-Alias -Name bc -Value backup-config -Scope Global -Option AllScope
+
+<#
+.SYNOPSIS
+    Git 代理管理函数集
+
+.DESCRIPTION
+    提供便捷的函数来管理 Git 的 HTTP/HTTPS 代理配置
+    - git-proxy-on: 启用代理（在家使用）
+    - git-proxy-off: 禁用代理（在公司使用）
+    - git-proxy-status: 查看当前代理状态
+    - git-proxy-toggle: 切换代理状态
+
+.EXAMPLE
+    PS> git-proxy-on
+    启用 Git 代理
+
+.EXAMPLE
+    PS> git-proxy-off
+    禁用 Git 代理
+
+.EXAMPLE
+    PS> git-proxy-status
+    查看当前代理配置
+
+.EXAMPLE
+    PS> git-proxy-toggle
+    自动切换代理状态
+#>
+
+# 启用 Git 代理（在家使用）
+function git-proxy-on {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $false)]
+        [string]$ProxyUrl = 'http://127.0.0.1:7897'
+    )
+    
+    $ProjectRoot = "$HOME\Documents\PowerShell"
+    $ProxyScript = Join-Path -Path $ProjectRoot -ChildPath "Scripts\GitProxyManager.ps1"
+    
+    if (Test-Path -Path $ProxyScript) {
+        & $ProxyScript -Action Set -ProxyUrl $ProxyUrl -Global
+    }
+    else {
+        Write-Warning "未找到 GitProxyManager.ps1 脚本，使用 Git 命令直接设置"
+        git config --global http.proxy $ProxyUrl
+        git config --global https.proxy $ProxyUrl
+        Write-Host "✓ Git 代理已启用: $ProxyUrl" -ForegroundColor Green
+    }
+}
+
+# 禁用 Git 代理（在公司使用）
+function git-proxy-off {
+    [CmdletBinding()]
+    param()
+    
+    $ProjectRoot = "$HOME\Documents\PowerShell"
+    $ProxyScript = Join-Path -Path $ProjectRoot -ChildPath "Scripts\GitProxyManager.ps1"
+    
+    if (Test-Path -Path $ProxyScript) {
+        & $ProxyScript -Action Unset -Global
+    }
+    else {
+        Write-Warning "未找到 GitProxyManager.ps1 脚本，使用 Git 命令直接移除"
+        git config --global --unset http.proxy 2>$null
+        git config --global --unset https.proxy 2>$null
+        Write-Host "✓ Git 代理已禁用" -ForegroundColor Green
+    }
+}
+
+# 查看 Git 代理状态
+function git-proxy-status {
+    [CmdletBinding()]
+    param()
+    
+    $ProjectRoot = "$HOME\Documents\PowerShell"
+    $ProxyScript = Join-Path -Path $ProjectRoot -ChildPath "Scripts\GitProxyManager.ps1"
+    
+    if (Test-Path -Path $ProxyScript) {
+        & $ProxyScript -Action Status -Global
+    }
+    else {
+        Write-Warning "未找到 GitProxyManager.ps1 脚本，使用 Git 命令直接查询"
+        $httpProxy = git config --global --get http.proxy
+        $httpsProxy = git config --global --get https.proxy
+        
+        Write-Host "`nGit 代理配置状态" -ForegroundColor Cyan
+        Write-Host "==================" -ForegroundColor Cyan
+        if ($httpProxy -or $httpsProxy) {
+            Write-Host "代理已启用:" -ForegroundColor Green
+            if ($httpProxy) { Write-Host "  HTTP:  $httpProxy" }
+            if ($httpsProxy) { Write-Host "  HTTPS: $httpsProxy" }
+        }
+        else {
+            Write-Host "代理未设置" -ForegroundColor Yellow
+        }
+        Write-Host ""
+    }
+}
+
+# 切换 Git 代理状态
+function git-proxy-toggle {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $false)]
+        [string]$ProxyUrl = 'http://127.0.0.1:7897'
+    )
+    
+    $ProjectRoot = "$HOME\Documents\PowerShell"
+    $ProxyScript = Join-Path -Path $ProjectRoot -ChildPath "Scripts\GitProxyManager.ps1"
+    
+    if (Test-Path -Path $ProxyScript) {
+        & $ProxyScript -Action Toggle -ProxyUrl $ProxyUrl -Global
+    }
+    else {
+        Write-Warning "未找到 GitProxyManager.ps1 脚本，使用 Git 命令直接切换"
+        $httpProxy = git config --global --get http.proxy
+        if ($httpProxy) {
+            git config --global --unset http.proxy 2>$null
+            git config --global --unset https.proxy 2>$null
+            Write-Host "✓ Git 代理已禁用" -ForegroundColor Green
+        }
+        else {
+            git config --global http.proxy $ProxyUrl
+            git config --global https.proxy $ProxyUrl
+            Write-Host "✓ Git 代理已启用: $ProxyUrl" -ForegroundColor Green
+        }
+    }
+}
+
+# 设置别名
+Set-Alias -Name gpon -Value git-proxy-on -Scope Global -Option AllScope
+Set-Alias -Name gpoff -Value git-proxy-off -Scope Global -Option AllScope
+Set-Alias -Name gpst -Value git-proxy-status -Scope Global -Option AllScope
+Set-Alias -Name gptg -Value git-proxy-toggle -Scope Global -Option AllScope
+
