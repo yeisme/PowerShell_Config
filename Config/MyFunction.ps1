@@ -355,3 +355,19 @@ Set-Alias -Name gpoff -Value git-proxy-off -Scope Global -Option AllScope
 Set-Alias -Name gpst -Value git-proxy-status -Scope Global -Option AllScope
 Set-Alias -Name gptg -Value git-proxy-toggle -Scope Global -Option AllScope
 
+# 自动加载：如果未定义 Get-SshHosts 则尝试点源 Scripts\List-SshHosts.ps1
+try {
+    if (-not (Get-Command -Name Get-SshHosts -ErrorAction SilentlyContinue)) {
+        $scriptPath = Join-Path -Path $PSScriptRoot -ChildPath "..\Scripts\List-SshHosts.ps1"
+        $scriptPath = [System.IO.Path]::GetFullPath($scriptPath)
+        if (Test-Path $scriptPath) {
+            try {
+                . $scriptPath
+            } catch {
+                Write-Verbose "Failed to source List-SshHosts.ps1: $_"
+            }
+        }
+    }
+} catch {
+    # 安全降级：不要抛出错误以免破坏配置加载
+}
