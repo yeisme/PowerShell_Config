@@ -276,67 +276,74 @@ try {
 
 $sshCompleterScriptBlock = {
     param($wordToComplete, $commandAst, $cursorPosition)
-    
+
+    # 常用 ssh 选项及说明（用于当以 - 开头时提供补全和提示，均为中文描述）
+    $sshOptions = @(
+        @{ Name='-p'; Desc='指定要连接的远程主机端口' },
+        @{ Name='--port'; Desc='与 -p 等效（长选项）' },
+        @{ Name='-i'; Desc='指定用于认证的私钥文件（IdentityFile）' },
+        @{ Name='-l'; Desc='指定登录用户名' },
+        @{ Name='-o'; Desc='以 ssh_config 格式传递选项（例如 -o Compression=yes）' },
+        @{ Name='-J'; Desc='通过跳板主机先建立 ssh，然后连接目标主机（ProxyJump）' },
+        @{ Name='-L'; Desc='本地端口转发（local_address:port:host:hostport）' },
+        @{ Name='-R'; Desc='远程端口转发（remote_address:port:host:hostport）' },
+        @{ Name='-W'; Desc='将标准输入/输出转发到远端主机的 host:port' },
+        @{ Name='-C'; Desc='启用压缩' },
+        @{ Name='-v'; Desc='显示调试信息（可多次使用增加详细度）' },
+        @{ Name='-q'; Desc='安静模式（抑制警告和诊断信息）' },
+        @{ Name='--help'; Desc='显示帮助并退出（注意并非所有 ssh 实现都支持 --help）' },
+        @{ Name='-F'; Desc='指定替代的 SSH 配置文件' },
+        @{ Name='-N'; Desc='不执行远程命令（通常用于端口转发）' },
+        @{ Name='-T'; Desc='禁用伪终端分配' },
+        @{ Name='-S'; Desc='为连接共享指定控制套接字路径' }
+    )
+
     # 获取命令行中的所有元素
     $ast = $commandAst.CommandElements
-    
-    # 检查是否为第一个参数（ssh 命令本身 + 要补全的参数）
-    # ssh <cursor> 或 ssh dev<cursor> 等情况
-    if ($ast.Count -le 1) {
-        # 只有命令本身，没有参数
-    } else {
-        # 检查倒数第二个元素是否是选项（以 - 开头）
-        # 如果不是选项，说明我们在补全主机名
-        $lastElement = $ast[-1].Extent.Text
-        $secondLast = $ast[-2].Extent.Text
-        
-        # 如果最后一个参数是选项（如 -p, -l 等），不补全主机名
-        if ($lastElement -match '^-') {
-            return
+
+    # 获取最后一个词（正在补全的词）
+    $lastElement = ''
+    if ($ast.Count -gt 0) { $lastElement = $ast[-1].Extent.Text }
+
+    # 如果正在输入以 - 开头的选项，提供选项补全（带描述）
+    if ($lastElement -like '-*') {
+        $prefix = $lastElement
+        $sshOptions | Where-Object { $_.Name -like "$prefix*" } | Sort-Object Name | ForEach-Object {
+            [System.Management.Automation.CompletionResult]::new($_.Name, $_.Name, 'ParameterName', $_.Desc)
         }
-        
-        # 检查是否已经有非选项参数了
-        $hasHostAlready = $false
-        for ($i = 1; $i -lt $ast.Count - 1; $i++) {
-            $elem = $ast[$i].Extent.Text
-            if ($elem -notmatch '^-' -and $elem -ne '') {
-                $hasHostAlready = $true
-                break
-            }
-        }
-        
-        # 如果已经有主机参数了，不再补全
-        if ($hasHostAlready) {
-            return
+        return
+    }
+
+    # 如果命令行已经指定了一个非选项参数（即主机名），则不再补全主机名
+    $hasHostAlready = $false
+    for ($i = 1; $i -lt $ast.Count; $i++) {
+        $elem = $ast[$i].Extent.Text
+        if ($elem -notmatch '^-' -and $elem -ne '') {
+            $hasHostAlready = $true
+            break
         }
     }
-    
-    # 获取所有主机名：直接解析 SSH config 文件
+    if ($hasHostAlready) { return }
+
+    # 获取所有主机名：解析 SSH config 文件并返回匹配的主机列表
     try {
         $sshConfigPath = "$env:USERPROFILE\.ssh\config"
         if (Test-Path $sshConfigPath) {
             $allHosts = @()
-            # 读取 SSH config 文件
             $rawLines = Get-Content -Path $sshConfigPath -Encoding utf8 -ErrorAction SilentlyContinue
-            
+
             foreach ($line in $rawLines) {
                 if ($null -eq $line) { continue }
                 $trim = $line.Trim()
-                # 匹配 Host 行并提取所有别名
                 if ($trim -match '^(?i)Host\s+(.*)$') {
                     $names = $matches[1] -split '\s+' | Where-Object { $_ -ne '' -and $_ -ne '*' }
                     $allHosts += $names
                 }
             }
-            
-            # 过滤并返回补全结果
+
             $allHosts | Sort-Object -Unique | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
-                [System.Management.Automation.CompletionResult]::new(
-                    $_,
-                    $_,
-                    'ParameterValue',
-                    "SSH Host: $_"
-                )
+                # 使用中文提示显示主机名补全内容
+                [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', "SSH 主机：$_")
             }
         }
     } catch {
@@ -352,7 +359,7 @@ if ($PSVersionTable.PSVersion.Major -ge 5) {
         # 为 ssh.exe 命令注册补全器
         Register-ArgumentCompleter -CommandName ssh.exe -ScriptBlock $sshCompleterScriptBlock -ErrorAction SilentlyContinue
     } catch {
-        Write-Warning "Failed to register ssh completer: $_"
+        Write-Warning "注册 ssh 补全器失败: $_"
     }
 }
 
